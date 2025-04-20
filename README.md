@@ -24,6 +24,7 @@ tâche 3 :
   - menu de sélection -> PAS ENCORE FAIT
  
 tâche 4 :
+
   AXE 1 :
     - niveau 3 : algorithme de la case la plus contrainte -> FAIT 
     - sélection efficace de la case la plus contrainte -> PAS ENCORE FAIT 
