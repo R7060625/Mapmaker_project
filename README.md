@@ -7,7 +7,6 @@ how to use :
   
 TODO : 
 - faire le niveau 2 et 3 de la tâche 3 afin de mieux pouvoir sélectionner les cases
-- défilement infini
 - garder en mémoire la carte lors du défilement infini ?
 - niveau 4 du solveur
 - rivieres
