@@ -30,5 +30,5 @@ tâche 4 :
     - sélection efficace de la case la plus contrainte -> PAS ENCORE FAIT 
 -  AXE 2 :
     - niveau 1 : complétion automatique de la carte -> FAIT
-    - niveau 2 : défilement infini -> PAS ENCORE FAIT 
+    - niveau 2 : défilement infini -> FAIT 
     - niveau 3 : assistant de conception -> PAS ENCORE FAIT 
