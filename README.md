@@ -3,7 +3,8 @@
 how to use :
 - barre espace pour activer le solveur 
 - clic une fois pour ajouter une case aléatoire, deuxième clic sur l'image pour la supprimer
-- v pour activer/désactiver le solveur
+- v pour activer/désactiver l'aspect visuel du solveur
+- flèches directionnelles pour le défilement infini
   
 TODO : 
 - faire le niveau 2 et 3 de la tâche 3 afin de mieux pouvoir sélectionner les cases
