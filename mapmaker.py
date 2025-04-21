@@ -1,15 +1,13 @@
 import os
 import fltk
 import random
-import time
-import doctest
-from typing import List, Dict, Tuple, Union, Optional
+from typing import List, Dict, Tuple, Optional
 
 ################################# GESTION DES FICHIERS ###########################################
 def cree_dico() -> Dict[str, str] : 
     """
     Récupère l'ensemble des titres de chaque fichier image, stockés respectivement
-    dans les dossiers "decors", "megatuile" et "tuiles" du dossier "fichiers fournis".
+    dans le dossier "tuiles" du dossier "fichiers fournis".
     Le programme et le dossier "fichiers fournis" doivent être stockés au même endroit de
     l'arborescence et chaque dossier contenant des images doit être stocké dans le dossier
     "fichiers fournis".
@@ -22,17 +20,17 @@ def cree_dico() -> Dict[str, str] :
             des string représentant le chemin de la tuile à partir du dossier parent.
     """
     
-    path = os.getcwd() # chemin actuel de l'arborescence
-    fichiers_images = ("decors", "megatuile", "tuiles") #dossier contenant des tuiles
-    
+    fichiers_images = ("megatuile", "tuiles") #dossier contenant des tuiles
+
     dico_path = {}
-    
-#     for dossier in fichiers_images :
-#         path_fichier = path + f"\\fichiers fournis\\{dossier}" # crée le bon path pour chaque dossier d'images
-#         
-#         for image in os.listdir(path_fichier) :
-#             dico_path[image[:4]] = f"{dossier}\\{image}"
-# Version with the Megatuile and the decors included
+
+    path = os.getcwd() # chemin actuel de l'arborescence
+
+    # for dossier in fichiers_images :
+    #     path_fichier = path + f"\\fichiers fournis\\{dossier}" # crée le bon path pour chaque dossier d'images
+        
+    #     for image in os.listdir(path_fichier) :
+    #         dico_path[image[:4]] = f"{dossier}\\{image}" # ajoute dans le dictionnaire la clé et la valeur correspondante
 
     path_fichier = path + "\\fichiers fournis\\tuiles"
     
@@ -41,10 +39,36 @@ def cree_dico() -> Dict[str, str] :
 
     return dico_path
 
+# def cree_dico() -> Dict[str, str]:
+#     """
+#     Ajoute les megatuiles dans le dictionnaire créé par cree_dico_intermediaire().
+#     Les clés des megatuiles sont leurs noms (composés de 4 lettres
+#     majuscules représentant les biomes) et leurs valeurs les chemins
+#     depuis leur dossier parent. 
+#     Les megatuiles doivent être codés d'une manière particulière. Par exemple,
+#     si l'on a une megatuile de montagne, on doit avoir un nom "MegaMMM.png".
+#     Il faut précéder le code de la tuile du nom Mega.
+
+#     Args :
+
+#     Retours :
+#         dict : même dictionnaire contenant en plus les megatuiles selon le même système de noms.
+#     """
+#     dico = cree_dico_intermediaire()
+
+#     path = os.getcwd()
+#     path_fichier = path + "\\fichiers fournis\\megatuile"
+
+#     for megatuile in os.listdir(path_fichier) :
+#         dico[megatuile[4:8]] = f"tuiles\\{megatuile}"
+
+
+    return dico
+
 ###################################################################################################
 
 ################################# PLACEMENT DES TUILES  ###########################################
-def emplacement_valide(grille : List[List[Optional[int]]] , i:int, j:int, nom_tuile: str) -> bool :
+def emplacement_valide(grille : List[List[Optional[str]]] , i:int, j:int, nom_tuile: str) -> bool :
     """
     Vérifie si la tuile nom_tuile se connecte
     correctement aux tuiles déjà posées dans les cases voisines de la case (i, j).
@@ -69,9 +93,42 @@ def emplacement_valide(grille : List[List[Optional[int]]] , i:int, j:int, nom_tu
                 return False
     return True
 
+# def emplacement_valide_mega(grille: List[List[Optional[str]]], *args) -> bool:
+#     """
+#     Vérifie si une tuile (classique ou mega) est valide à un emplacement donné.
+
+#     - Tuile classique : emplacement_valide(grille, i, j, nom_tuile)
+#     - MegaTuile  : emplacement_valide(grille, i, j, nom_tuile, hauteur, largeur)
+
+#     """
+#     if len(args) == 3:
+#         i, j, nom_tuile = args 
+#         hauteur, longeur = (1, 1) # les tuiles standard prennent 1x1 = 1 taille de case
+
+#     elif len(args) == 5:
+#         i, j, nom_tuile, hauteur, largeur = args # on fait le même procédé pour les megatuiles, qui prendront plus de cases
+
+#     # Pour chaque case bordure de la zone (taille x taille)
+#     # for di in range(hauteur):
+#     #     for dj in range(longueur):
+#     #         x, y= i + di, j + dj # on crée des nouvelles coordonnées par rapport au décalage en taille et en hauteur
+#     #         voisins = [(x-1, y), (x, y+1), (x+1, y), (x, y-1)]
+
+#     #         for index, (vx, vy) in enumerate(voisins):
+#     #             if 0 <= vx < len(grille) and 0 <= vy < len(grille[0]):
+#     #                 voisin = grille[vx][vy]
+#     #                 if voisin is not None:
+#     #                     indice_voisin = (index + 2) % 4
+#     #                     if voisin[indice_voisin] != nom_tuile[index]:
+#     #                         return False
+#     # return True
+
+#     for nb_largeur in range(hauteur) :
+#         for nb_longueur in range(largeur) :
 
 
-def tuiles_possibles(grille: List[List[Optional[int]]], i: int, j:int) -> List[str] :
+
+def tuiles_possibles(grille: List[List[Optional[str]]], i: int, j:int) -> List[str] :
     """
     Renvoie la liste de toutes les tuilles qui peuvent être
     positionnées à la case (i, j) dans la grille en respectant les règles d’adjacence.
@@ -93,6 +150,33 @@ def tuiles_possibles(grille: List[List[Optional[int]]], i: int, j:int) -> List[s
     
     return liste_tuiles
 
+# def ajoute_megatuiles(grille: List[List[Optional[str]]], height_megatuile: int, width_megatuile: int, i_clic: int, j_clic:int) -> None :
+#     """
+#     Permet d'ajouter des megatuiles dans la fenêtre ainsi que dans la grille.
+#     On calcule d'abord le nombre de cases nécessaires pour placer la megatuile,
+#     puis on ajoute sur le bon nombre de cases la tuile dans la grille et dans la 
+#     fenêtre. 
+
+#     Args :
+#         grille (list) : matrice représentative
+
+#         height_megatuile (int) : hauteur de la megatuile
+
+#         width_megatuile (int) : longueur de la megatuile
+
+#         i_clic, j_clic (int) : coordonnées du clic dans le repère de la fenêtre (10x10 cases de 75px)
+    
+#     Retours :
+#         None
+#     """
+#     height_dans_grille, width_dans_grille = height_megatuile//75, width_megatuile//75
+
+#     cases_prises_j = [tuple(f"({i_clic}, {j_clic +x})") for x in range(width_dans_grille)]
+
+#     cases_prises_i = [tuple(f"({i_clic +x}, {j_clic})") for x in range(height_dans_grille)]
+
+#     # faire un try catch pour être sûr que cela rentre dans la grille
+
 #######################################################################################################  
 
 ################################# FONCTIONNALITES GRAPHIQUES ###########################################
@@ -106,10 +190,27 @@ def cree_UI() -> None :
     Returns :
         None
     """
-    fltk.cree_fenetre(750, 750, affiche_repere = True, redimension=False)
+    fltk.cree_fenetre(750, 750, affiche_repere = True, redimension=True)
+
+def clear_fenetre() -> None :
+    """
+    Permet d'effacer toute la fenêtre.
+
+    Args :
+        None
+
+    Retours : 
+        None
+    """
+    for i in range(10) :
+        for j in range(10) :
+            fltk.efface(f"case_{i}_{j}")
+
+    fltk.mise_a_jour()
+            
 
 
-def gere_clic(grille: List[List[Optional[int]]]) -> None :
+def gere_clic_v1(grille: List[List[Optional[str]]], dico_etat_visuel: Dict[str, bool]) -> None :
     """
     Gère un clic gauche de la souris sur la grille :
      Convertit les coordonnées en indices de case.
@@ -119,6 +220,7 @@ def gere_clic(grille: List[List[Optional[int]]]) -> None :
      Args :
         grille (list) : tableau
          
+        dico_etat_visuel (dict) : permet de garder l'état du visuel, qui est un booléen selon s'il est activé ou non
     Returns :
         None
     """
@@ -145,7 +247,7 @@ def gere_clic(grille: List[List[Optional[int]]]) -> None :
                     
                     grille[i][j] = tuile # ajoute notre tuile à la matrice de représentation
                     
-                    chemin = f"{os.getcwd()}\\fichiers fournis\\{dico[tuile]}" # récupération du chemin dans l'arborescence
+                    chemin = f"{os.getcwd()}\\fichiers fournis\\{dico[tuile]}" # récudpération du chemin dans l'arborescence
                     
                     fltk.image(j * 75, i * 75, chemin, ancrage = "nw", largeur=75, hauteur=75, tag=tag_case)
                     
@@ -159,73 +261,136 @@ def gere_clic(grille: List[List[Optional[int]]]) -> None :
             fltk.efface(tag_case) # efface la case avec les coordonnées (i, j)
             
     elif tev == "Touche":
-        gere_clavier(grille, ev)
+        gere_clavier(grille, ev, dico_etat_visuel)
             
         fltk.mise_a_jour() # rafraîchit la page pour supprimer tout ce qui est nécessaire
 
 
-
-
-def gere_clavier(grille: List[List[Optional[int]]], ev: tuple) -> None :
+def gere_clavier(grille: List[List[Optional[str]]], ev: tuple, dico_etat_visuel: Dict[str, bool]) -> None :
     """
     Gère les évènements clavier :
         l'utilisateur doit appuyer sur :
             - espace pour déclencher le solveur
-            - les flèches clavier (haut, droite, bsa, gauche pour activer le défilement infini)
+            - les flèches clavier (haut, droite, bas, gauche pour activer le défilement infini)
+            - v pour activer ou désactiver le solveur. Par défaut, il est activé
+            - c pour effacer complétement la fenêtre et recommencer la carte
      
      Args :
          grille(list) : tableau
          
+         ev (tuple) : événement ( en l'occurence, forcément une touche) qui a activé la fonction
+         
+         dico_etat_visuel : dictionnaire gardant en mémoire l'état du visuel
     Returns :
-        None
+        None       
     """
-    touche = fltk.touche(ev)
 
+    touche = fltk.touche(ev)
     dico = cree_dico()
     
-    if touche == "space": # gère le placement manuel des tuiles sur le tableau
+    if touche == "v" :
+        dico_etat_visuel["visuel_actif"] = not(dico_etat_visuel["visuel_actif"])  # on affiche quand l'utilisateur appuie sur v
+        print(dico_etat_visuel["visuel_actif"])
 
-        solveur_n3_visuel(grille, dico) # complète (si possible) la matrice
-    
+    elif touche == "space": # gère le placement manuel des tuiles sur le tableau
+        solveur_n3_visuel(grille, dico, visuel= dico_etat_visuel["visuel_actif"]) # complète (si possible) la matrice
 
 
-#     # FAIRE EN SORTE DE SUPPRIMER LES IMAGES DE LA FENETRE EN DELETANT LE TAG
-#      IL FAUT DECALER UNE PAR UNE TOUTES LES IMAGES DE LA GRILLE 
-#     if touche == "Up" :
-#         ligne = grille.pop() # retire la première ligne du tableau
-#         
-#         i=1 # numéro de la ligne supprimée, constant
-#         
-#         for index, image in enumerate(ligne) :
-#             fltk.efface
-#             
-#         solveur_n1_visuel(grille, dico) # complète (si possible) la matrice
-#         
-#     if touche == "Down":
-#         grille.pop(-1)
-#         solveur_n1_visuel(grille, dico) # complète (si possible) la matrice
-#         
-#     if touche == "Left" :
-#         for ligne in grille :
-#             ligne.pop()
-#         solveur_n1_visuel(grille, dico) # complète (si possible) la matrice
-#     
-#     if touche == "Right" :
-#         for ligne in grille :
-#             ligne.pop(-1)
-#         solveur_n1_visuel(grille, dico) # complète (si possible) la matrice
+    elif touche in ["Up", "Left", "Down", "Right"] :
+        decale_grille(grille, touche)
+        clear_fenetre()
+        fltk.mise_a_jour()
+        affiche_nv_fenetre(grille, touche, dico)
+        solveur_n1_visuel(grille, dico)
+
+
+    elif touche == "c" :
+        for i in range(10) :
+            for j in range(10) :
+                fltk.efface(f"case_{i}_{j}")
+                grille[i][j] == None
+        fltk.mise_a_jour()
         
-        
+
     fltk.mise_a_jour()
+
+def decale_grille(grille: List[List[Optional[str]]], touche: str) -> None: # pas besoin de toucher
+    """
+    Décale toutes les cases de la matrice dans la direction
+     appropriée. La direction opposée au scroll (les nouvelles
+     cases que l'on veut voir) sont remplacées par None.
+
+     Args :
+        grille (list) : matrice représentative
+
+        touche : valeur de la touche (ici, flèche directionnelle) sur laquelle on a appuyé
+
+    Retours :
+        None
+    """
+    if touche == "Down":
+        grille.pop(0)  # supprime la première ligne
+        grille.append([None]*len(grille[0]))  # ajoute une ligne en bas
+
+    elif touche == "Up" :
+        grille.pop(-1)
+        grille.insert(0, [None]*len(grille[0]))
+
+
+    elif touche == "Right":
+        for ligne in grille:
+            ligne.pop(0)
+            ligne.append(None)
+
+        
+    elif touche == "Left" :
+        for index_ligne, ligne in enumerate(grille) :
+            ligne.pop(-1)
+            ligne.insert(0, None)
+
+
+
+def affiche_nv_fenetre(grille: List[List[Optional[str]]], direction_scroll: str, dico_tuiles: Dict[str, str]) -> None :
+    """
+
+    après avoir décalé la grille dans la direction appropriée,
+    et rendu la fenêtre vierge, 
+    on peut replace chaque image dans la bonne nouvelle case.
+    On supprimera les images qui sortent du champ dans une autre
+    fonction.
+
+    Args :
+        direction_scroll (str) : reprend la valeur de la touche 
+            pressée. Indique dans quelle direction décaler les images.
+
+        dico_tuiles (dict) : dictionnaire contenant tous les chemins
+    Retours : 
+        None
+    """
+
+    path_dossier_tuiles = os.getcwd() + "\\fichiers fournis\\"
+
+    for i in range(len(grille)):
+        for j in range(len(grille[0])):
+
+            tuile = grille[i][j] 
+
+            if tuile:  # si la tuile est None, on ne l'affiche pas -> évite de faire des disjonctions de cas
+
+                fltk.image(j*75, i*75, path_dossier_tuiles + dico_tuiles[tuile],
+                           ancrage="nw", hauteur=75, largeur=75, tag=f"case_{i}_{j}")
+
+                
 
 #####################################################################################   
 
 ################################# SOLVEUR ###########################################
 
-def choisit_case_vide_slv1(grille: List[List[Optional[int]]]) -> Tuple[int, int]  :
+def choisit_case_vide_slv1(grille):
     """
-    Prend la première case vide afin de faire l'algorithme de backtracking
-    dessus.
+    Prend la première case vide selon le sens de lecture
+    occidental (gauche à droite et haut en bas) afin de 
+    faire l'algorithme de backtracking dessus.
     
     Args :
         grille (list) : liste de listes représentant le tableau 10x10 de base
@@ -240,68 +405,13 @@ def choisit_case_vide_slv1(grille: List[List[Optional[int]]]) -> Tuple[int, int]
             if case is None :
                 return indice_ligne, indice_case # retourne la première case vide lors d'un parcours itératif
 
-
-
-def grille_remplie(grille : List[List[Optional[int]]]) -> bool :
-    """
-    Vérifie s'il reste au moins un None dans la matrice.
-    
-    
-    Args :
-        grille (list) : liste de listes représentant le tableau 10x10 de base
-    
-    Retours :
-        bool : False si au moins un None est présent dans la matrice.
-        
-    """
-    for ligne in grille :
-        for case in ligne :
-            if case is None :
-                return False
-    return True
-
-
-
-def solveur_n1(grille : List[List[Optional[int]]]) -> bool :
+def solveur_n1_visuel(grille, dico) -> None :
     """
     Algorithme de backtracking, basé sur un parcours itératif
     pour trouver la première case vide sur laquelle baser l'algorithme.
     On choisit la case en parcourant la liste dans le sens de lecture occidental
-    (i.e. de gauche à droite puis de haut en bas).
-    
-    Args :
-        grille (list) : liste de listes représentant le tableau 10x10 de base
-    
-    Retours :
-        None
-    """
-    if grille_remplie(grille) :
-        return True
-    else :
-        i, j = choisit_case_vide_slv1(grille) # coordonnées de la première case vide
-        liste_tuiles = tuiles_possibles(grille, i, j)
-        for tuile in liste_tuiles :
-            
-            grille[i][j] = tuile # on ajoute une tuile dans la case vide
-            if solveur_n1(grille): #on lance la recherche récursive pour compléter la grille
-                return True
-            else :
-                grille[i][j] = None
-        return False
-    
-def affiche_cases_latentes(grille: List[List[Optional[int]]]) -> None :
-    """
-    upload les images sur la fenêtre mais ne les met
-    à jour qu'à la fin du programme, afin que l'utilisateur
-    ne voit pas le process.
-    """
-    
-def solveur_n1_visuel(grille : List[List[Optional[int]]], dico: Dict[str, str]) -> None :
-    """
-    Algorithme de backtracking, basé sur un parcours itératif
-    pour trouver la première case vide sur laquelle baser l'algorithme.
-    On choisit la case en parcourant la liste dans le sens de lecture occidental
-    (i.e. de gauche à droite puis de haut en bas).
+    (i.e. de gauche à droite puis de haut en bas). La différence avec la fonction
+    "solveur_n1" est que celle-ci affiche le processus de recherche fait pour chaque case.
     
     Args :
         grille (list) : liste de listes représentant le tableau 10x10 de base
@@ -333,17 +443,33 @@ def solveur_n1_visuel(grille : List[List[Optional[int]]], dico: Dict[str, str]) 
                 return True
             else :
                 grille[i][j] = None
-        return False
+        return 
     
 
 
-
-def plus_contrainte(grille: List[List[Optional[int]]]) -> Tuple[int, int] :
+def grille_remplie(grille : List[List[Optional[str]]]) -> bool :
     """
-    Pour chaque étape du solving, on compte le nombre
-    de tuiles disponibles pour chaque case vide. La case
-    avec le moins de tuiles (i.e. la case la plus contrainte)
-    est celle qui sera remplie. Ce système est basé sur la recherche 
+    Vérifie s'il reste au moins un None dans la matrice.
+    
+    
+    Args :
+        grille (list) : liste de listes représentant le tableau 10x10 de base
+    
+    Retours :
+        bool : False si au moins un None est présent dans la matrice.
+        
+    """
+    for ligne in grille :
+        for case in ligne :
+            if case is None :
+                return False
+    return True
+
+
+def plus_contrainte(grille: List[List[Optional[str]]]) -> Tuple[int, int] :
+    """
+    Cherche dans la matrice la case vide avec le moins de 
+    tuiles que l'on peut placer dessus. Ce système est basé sur la recherche 
     du Minimum Remaining Value, solution utilisée en Constraint
     Satisfaction Problems. 
     
@@ -355,10 +481,9 @@ def plus_contrainte(grille: List[List[Optional[int]]]) -> Tuple[int, int] :
 
     """
     # on considère que la case la plus contrainte est la première
-    plus_contrainte = float('inf') # toutes les cases ont un nombre fini de contraintes (donc inférieur à inf) 
+    plus_contrainte = float('inf') # toutes les cases ont un nombre fini de contraintes (donc inférieur à inf); pratique de fixer la limite haute à cette valeur
 
     coordonnees_plus_contrainte = (-1, -1) # pour l'instant, la case avec le plus de contraintes n'existe pas donc on la met hors-grille
-
 
     for i, ligne in enumerate(grille) :
         
@@ -375,57 +500,31 @@ def plus_contrainte(grille: List[List[Optional[int]]]) -> Tuple[int, int] :
 
 
 
-def solveur_n3(grille: List[List[Optional[int]]]) -> None :
+def solveur_n3_visuel(grille : List[List[Optional[str]]], dico : Dict[str, str], visuel=False) -> None :
     """
-    Pour chaque étape du solving, on compte le nombre
-    de tuiles disponibles pour chaque case vide. La case
-    avec le moins de tuiles (i.e. la case la plus contrainte)
-    est celle qui sera remplie. Ce système est basé sur la recherche 
-    du Minimum Remaining Value, solution utilisée en Constraint
-    Satisfaction Problems.
-    
-    Args :
-        grille (list) : matrice des tuiles
-        
-    Retours :
-        None    
-    """
-    if grille_remplie(grille) :
-        return True 
-
-    else :
-        i, j = plus_contrainte(grille) # on séléctionne la case la plus contrainte (étape 2)
-
-        lst_tuiles = tuiles_possibles(grille, i, j) 
-
-        for tuile in lst_tuiles :
-            grille[i][j] = tuile
-
-            if solveur_n3(grille): #on lance la recherche récursive pour compléter la grille
-                return True
-            else :
-                grille[i][j] = None
-        return False
-
-
-def solveur_n3_visuel(grille : List[List[Optional[int]]], dico : Dict[str, str]) -> None :
-    """
-    Pour chaque étape du solving, on compte le nombre
-    de tuiles disponibles pour chaque case vide. La case
-    avec le moins de tuiles (i.e. la case la plus contrainte)
-    est celle qui sera remplie. Ce système est basé sur la recherche 
+    On parcourt l'entièreté de la liste afin de trouver 
+    la case la plus contrainte et on base notre 
+    algorithme de backtracking dessus, à chaque itération
+    du solveur. Ce système est basé sur la recherche 
     de la Minimum Remaining Value (RMV), solution utilisée en Constraint
-    Satisfaction Problems 
+    Satisfaction Problems. La différence avec la fonction "solveur_n3" est 
+    que celle-ci affiche toutes les étapes une par une de la création de la 
+    carte.
     
     Args :
         grille (list) : matrice des tuiles
 
         dico (dict) : dictionnaire qui contient les noms des tuiles en clés et leurs chemins en valeurs
+
+    Keyword Args :
+        visuel (bool) : indique si le solveur doit afficher chaque étape ou non
         
     Retours :
         None    
     """
     if grille_remplie(grille) :
+        if visuel is False :
+            fltk.mise_a_jour()
         return True 
 
     else :
@@ -444,55 +543,68 @@ def solveur_n3_visuel(grille : List[List[Optional[int]]], dico : Dict[str, str])
                     
             fltk.image(j * 75, i * 75, chemin, ancrage = "nw", largeur=75, hauteur=75, tag = f"case_{i}_{j}")
             
-            fltk.mise_a_jour()
+            if visuel :
+                fltk.mise_a_jour()
             
-
-            if solveur_n3_visuel(grille, dico): #on lance la recherche récursive pour compléter la grille
+            if solveur_n3_visuel(grille, dico, visuel= visuel): #on lance la recherche récursive pour compléter la grille
                 return True
             else :
                 grille[i][j] = None
         return False
 
-def cases_inchangees(grille:List[List[Optional[int]]],     i: int, j:int) -> List[Tuple[int, int]] :
+def cases_voisins_changes(grille:List[List[Optional[str]]], i: int, j:int) -> List[Tuple[int, int]] :
     """
-    # TODO : vérifier comment la fonction marche dans le cas du backtracking qui modifie une case déjà placée 
-
-
-    
-    Fonction appelée dans le niveau 4 du solveur.
-    Renvoie la liste dont les voisins n'ont pas été changées 
-    et donc par définition, qui gardent le même niveau de
-    contrainte. Les cases dont les voisins sont déjà 
-    complétées sont considérées inchangées aussi.
-
-    si 8 voisins tous non-vides ou tous vides -> append
-
-    dans le solveur_n4, au lieu de rappeler la fonction pour connaître
-    les cases inchangées, on supprime de la liste des cases inchangées 
-    les cases voisines de la dernière case modifiée 
+    Renvoie la liste des cases valides dont au moins un des quatres voisins a été modifié.
 
     Args :
-        grille (list) : matrice
+        grille (list) : matrice représentative
+        i, j (int) : coordonnées de la dernière case placée 
 
-        # i, j (int) : coordonnées de la dernière tuile placée 
-
-    Retours :
-        list : liste de couples d'entiers représentant les coordonnées où ce n'est pas utile
-                de checker la contrainte.
+    Returns :
+        list : liste des couples de coordonnées
     """
+    voisins = [(i-1, j), (i, j+1), (i+1, j), (i, j-1)] # liste des coordonnées des tuiles voisines à la case modifiée
 
-
-    voisins = [(i-1, j), (i, j+1), (i+1, j), (i, j-1)]
-
-    res = grille.copy() # on considère que la liste des cases inchangées vaut la matrice grille, puis on retire les voisins de la dernière case
+    nv_liste = []
 
     for voisin in voisins :
-        if voisin is None : # on s'intéresse uniquement aux cases qui ne sont pas déjà placées, donc celles vides
-            i_voisin, j_voisin = voisin
-            del res[i_voisin][j_voisin] # on supprime cette case de la liste des cases inchangées 
-    return res 
+        i_voisin, j_voisin = voisin
+        if voisin is not None and 0 <= i_voisin <= len(grille) and 0 <= j_voisin <= len(grille[0]) : # on vérifie que le voisin soit valide
+            nv_liste.append(voisin)
+    
+    return nv_liste 
 
 
+def plus_contrainte_v2(grille: List[List[Optional[str]]], liste_voisins : List[Tuple[int, int]]) -> Tuple[int, int] :
+    """
+    Cherche dans la matrice la case vide avec le moins de 
+    tuiles que l'on peut placer dessus. Ce système est basé sur la recherche 
+    du Minimum Remaining Value, solution utilisée en Constraint
+    Satisfaction Problems. 
+    
+    Args :
+        grille (list) : matrice des tuiles
+        
+    Retours :
+        i, j (int) : coordonnées de la case la plus contrainte
+
+    """
+    # on considère que la case la plus contrainte est la première
+    plus_contrainte = float('inf') # toutes les cases ont un nombre fini de contraintes (donc inférieur à inf); pratique de fixer la limite haute à cette valeur
+
+    coordonnees_plus_contrainte = (-1, -1) # pour l'instant, la case avec le plus de contraintes n'existe pas donc on la met hors-grille
+
+
+    for i, j in liste_voisins :
+            
+            nb_tuiles = len(tuiles_possibles(grille, i, j)) # on compte le nombre de tuiles dispo pour la case (i, j)
+            
+            if nb_tuiles < plus_contrainte and grille[i][j] is None: # on tombe sur une case vide plus contrainte que notre plus contrainte
+
+                # on assigne donc la nouvelle MRV 
+                plus_contrainte = nb_tuiles
+                coordonnees_plus_contrainte = (i, j)
+    return coordonnees_plus_contrainte
 
 
 
@@ -530,12 +642,15 @@ def mapmaker() -> None :
 #     grille_test = [["PFMP", "HFHS" , None ],[None    , None , None ],[None    , None , None ]]
 
     cree_UI()
+
+    etat_visuel = {"visuel_actif" : False} # désactive par défaut l'affichage dynamique 
     while True :
-        gere_clic(grille)
+        gere_clic_v1(grille, etat_visuel)
 
 
 if __name__ == "__main__" :
     mapmaker()
+
 
 
     
