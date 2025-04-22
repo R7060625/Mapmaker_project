@@ -8,7 +8,7 @@ how to use :
   
 TODO : 
 - faire le niveau 2 et 3 de la tâche 3 afin de mieux pouvoir sélectionner les cases
-- garder en mémoire la carte lors du défilement infini ?
+- enregistrement de la carte (dans son état partiel ou fini) ? 
 - niveau 4 du solveur
 - rivieres
 - decors
