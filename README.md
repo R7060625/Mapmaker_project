@@ -13,6 +13,7 @@ TODO :
 - rivieres
 - decors
 - lundi de la rentrée -> amphi qui aidera pour les rivières
+- améliorer l'apparence des messages d'erreurs (lignes 642 et 230 à vérifier)
 
 
 Tâche 2 :
@@ -32,4 +33,4 @@ tâche 4 :
 -  AXE 2 :
     - niveau 1 : complétion automatique de la carte -> FAIT
     - niveau 2 : défilement infini -> FAIT 
-    - niveau 3 : assistant de conception -> PAS ENCORE FAIT 
+    - niveau 3 : assistant de conception -> FAIT 
