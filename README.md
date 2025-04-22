@@ -13,7 +13,7 @@ TODO :
 - rivieres
 - decors
 - lundi de la rentrée -> amphi qui aidera pour les rivières
-- améliorer l'apparence des messages d'erreurs (lignes 642 et 230 à vérifier)
+- améliorer l'apparence des messages d'erreurs (lignes 642 et 230 (peut-être) à vérifier)
 
 
 Tâche 2 :
@@ -24,12 +24,14 @@ Tâche 2 :
 tâche 3 :
   - tuile aléatoire -> FAIT
   - menu de sélection -> PAS ENCORE FAIT
+  - menu de sélection déroulant -> PAS ENCORE FAIT 
  
 tâche 4 :
 
  - AXE 1 :
     - niveau 3 : algorithme de la case la plus contrainte -> FAIT 
-    - sélection efficace de la case la plus contrainte -> PAS ENCORE FAIT 
+    - sélection efficace de la case la plus contrainte -> PAS ENCORE FAIT
+    - 
 -  AXE 2 :
     - niveau 1 : complétion automatique de la carte -> FAIT
     - niveau 2 : défilement infini -> FAIT 
