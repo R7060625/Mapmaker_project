@@ -150,32 +150,6 @@ def tuiles_possibles(grille: List[List[Optional[str]]], i: int, j:int) -> List[s
     
     return liste_tuiles
 
-# def ajoute_megatuiles(grille: List[List[Optional[str]]], height_megatuile: int, width_megatuile: int, i_clic: int, j_clic:int) -> None :
-#     """
-#     Permet d'ajouter des megatuiles dans la fenêtre ainsi que dans la grille.
-#     On calcule d'abord le nombre de cases nécessaires pour placer la megatuile,
-#     puis on ajoute sur le bon nombre de cases la tuile dans la grille et dans la 
-#     fenêtre. 
-
-#     Args :
-#         grille (list) : matrice représentative
-
-#         height_megatuile (int) : hauteur de la megatuile
-
-#         width_megatuile (int) : longueur de la megatuile
-
-#         i_clic, j_clic (int) : coordonnées du clic dans le repère de la fenêtre (10x10 cases de 75px)
-    
-#     Retours :
-#         None
-#     """
-#     height_dans_grille, width_dans_grille = height_megatuile//75, width_megatuile//75
-
-#     cases_prises_j = [tuple(f"({i_clic}, {j_clic +x})") for x in range(width_dans_grille)]
-
-#     cases_prises_i = [tuple(f"({i_clic +x}, {j_clic})") for x in range(height_dans_grille)]
-
-#     # faire un try catch pour être sûr que cela rentre dans la grille
 
 #######################################################################################################  
 
@@ -236,7 +210,8 @@ def gere_clic_v1(grille: List[List[Optional[str]]], dico_etat_visuel: Dict[str, 
         
         tag_case = f"case_{i}_{j}" # création du tag à l'emplacement (i, j)
         
-        
+        assistant_conception(grille) # affiche en rouge l'emplacement le plus contraint
+
         if grille[i][j] is None: # process ajouter une case au tableau : vérifier si la case est vide, vérifier si bien placé -> place l'image
             if 0 <= i < len(grille) and 0 <= j < len(grille[0]) :  
                 dico = cree_dico()
@@ -259,11 +234,19 @@ def gere_clic_v1(grille: List[List[Optional[str]]], dico_etat_visuel: Dict[str, 
         else : # la case n'est pas vide donc il faut supprimer l'image à cet emplacement
             grille[i][j] = None # enlève la case de la matrice de représentation
             fltk.efface(tag_case) # efface la case avec les coordonnées (i, j)
-            
+
+        assistant_conception(grille) # dessine la nouvelle case la plus contrainte
+
+
     elif tev == "Touche":
         gere_clavier(grille, ev, dico_etat_visuel)
             
         fltk.mise_a_jour() # rafraîchit la page pour supprimer tout ce qui est nécessaire
+
+
+
+
+
 
 
 def gere_clavier(grille: List[List[Optional[str]]], ev: tuple, dico_etat_visuel: Dict[str, bool]) -> None :
@@ -293,10 +276,14 @@ def gere_clavier(grille: List[List[Optional[str]]], ev: tuple, dico_etat_visuel:
         print(dico_etat_visuel["visuel_actif"])
 
     elif touche == "space": # gère le placement manuel des tuiles sur le tableau
+
+        fltk.efface("rectangle_contraint") # efface le rectangle rouge lié à l'assistant de conception, s'il existe
+
         solveur_n3_visuel(grille, dico, visuel= dico_etat_visuel["visuel_actif"]) # complète (si possible) la matrice
 
 
     elif touche in ["Up", "Left", "Down", "Right"] :
+        fltk.efface('rectangle_contraint') # efface le rectangle rémanent de l'assistant de conception
         decale_grille(grille, touche)
         clear_fenetre()
         fltk.mise_a_jour()
@@ -606,14 +593,54 @@ def plus_contrainte_v2(grille: List[List[Optional[str]]], liste_voisins : List[T
                 coordonnees_plus_contrainte = (i, j)
     return coordonnees_plus_contrainte
 
+def show_case_contrainte(grille: List[List[Optional[str]]]) -> Tuple[str, str] :
+    """
+    L'assistant de conception affiche en direct quelle est la case vide
+    la plus contrainte, qui sera en l'occurence entourée d'un cadre rouge.
+
+    Args :
+        grille (list) : matrice représentative
+
+    Retours : 
+        renvoie les coordonnées de la case la plus contrainte (pourrait 
+        renvoyer None mais faire ceci économise un appel à 
+        plus_contrainte() étant donné que la fonction est appelée
+        dans assitant_conception(). )
+    """
+
+    fltk.efface("rectangle_contraint")
+
+    i, j = plus_contrainte(grille)
+
+    fltk.rectangle(j*75, i*75, (j+1)*75, (i+1)*75, couleur="red", tag="rectangle_contraint")
+
+    return i, j
 
 
+def assistant_conception(grille: List[List[Optional[str]]]) -> None :
+    """
+    Associé à la fonction show_case_contrainte(). 
+    Si la case contrainte affichée en rouge n'a pas 
+    de solutions, alors on considère que la carte ne peut plus être
+    remplie et le solveur affiche un message d'alerte, qui se retirera
+    une fois que la case pourra à nouveau être complétée.
 
+    Args : 
+        grille (list) : matrice représentative
 
+    Retours :
+        None
+    """
+    fltk.efface("aucune_tuile")
+    i, j = show_case_contrainte(grille)
 
-    
+    nb_tuiles = len(tuiles_possibles(grille, i, j))
 
-    
+    if nb_tuiles == 0 :
+
+        # AMELIORER L'APPARENCE DU MESSAGE D'ERREUR 
+        
+        fltk.rectangle(100, 100, 500, 300, couleur= "red", tag="aucune_tuile")
 
 
 
