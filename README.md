@@ -12,6 +12,7 @@ TODO :
 - niveau 4 du solveur
 - rivieres
 - decors
+- lundi de la rentrée -> amphi qui aidera pour les rivières
 
 
 Tâche 2 :
