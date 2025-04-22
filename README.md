@@ -5,7 +5,8 @@ how to use :
 - clic une fois pour ajouter une case aléatoire, deuxième clic sur l'image pour la supprimer
 - v pour activer/désactiver l'aspect visuel du solveur
 - flèches directionnelles pour le défilement infini
-  
+- rectangle rouge : case vide la plus contrainte
+- grand rectangle rouge vide quand on place une tuile -> le solveur ne peut plus être complété et il faut retirer des tuiles (écran de warning à faire)
 TODO : 
 - faire le niveau 2 et 3 de la tâche 3 afin de mieux pouvoir sélectionner les cases
 - enregistrement de la carte (dans son état partiel ou fini) ? 
