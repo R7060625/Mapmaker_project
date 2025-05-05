@@ -37,3 +37,8 @@ tâche 4 :
     - niveau 1 : complétion automatique de la carte -> FAIT
     - niveau 2 : défilement infini -> FAIT 
     - niveau 3 : assistant de conception -> FAIT 
+
+
+reste à faire pour les megatuiles : 
+- gérer l'ajout aux fichiers
+- trouver un moyen de détecter les appels aux fonctions megatuiles ( utilisr la menu d'affichage ?) trouver un moyen de tester avant que faid le fasse
