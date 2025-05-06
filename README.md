@@ -42,3 +42,5 @@ tâche 4 :
 reste à faire pour les megatuiles : 
 - gérer l'ajout aux fichiers
 - trouver un moyen de détecter les appels aux fonctions megatuiles ( utilisr la menu d'affichage ?) trouver un moyen de tester avant que faid le fasse
+- CREER UNE STRUCTURE DE DONNEES QUI CONTIENT LA TAILLE DES TUILES EN ATTENDANT DE FAIRE UNE FONCTION AVEC PIL (déterminer la taille de la tuile modulo 75)
+- SI LE CLIC EST DANS UN COIN DIFFERENT DE HAUT GAUCHE, ADAPTER LA MANIERE DONT LA TUILE EST PLACEE
