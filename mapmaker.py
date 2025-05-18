@@ -2,7 +2,6 @@ import os
 import fltk
 import random
 from typing import List, Dict, Tuple, Optional
-
 ################################# GESTION DES FICHIERS ###########################################
 def cree_dico() -> Dict[str, str] : 
     """
@@ -20,17 +19,11 @@ def cree_dico() -> Dict[str, str] :
             des string représentant le chemin de la tuile à partir du dossier parent.
     """
     
-    fichiers_images = ("megatuile", "tuiles") #dossier contenant des tuiles
+    # fichiers_images = ("megatuile", "tuiles") #dossier contenant des tuiles
 
     dico_path = {}
 
     path = os.getcwd() # chemin actuel de l'arborescence
-
-    # for dossier in fichiers_images :
-    #     path_fichier = path + f"\\fichiers fournis\\{dossier}" # crée le bon path pour chaque dossier d'images
-        
-    #     for image in os.listdir(path_fichier) :
-    #         dico_path[image[:4]] = f"{dossier}\\{image}" # ajoute dans le dictionnaire la clé et la valeur correspondante
 
     path_fichier = path + "\\fichiers fournis\\tuiles"
     
@@ -54,16 +47,30 @@ def cree_dico() -> Dict[str, str] :
 #     Retours :
 #         dict : même dictionnaire contenant en plus les megatuiles selon le même système de noms.
 #     """
-#     dico = cree_dico_intermediaire()
+
+#     dico = {}
 
 #     path = os.getcwd()
 #     path_fichier = path + "\\fichiers fournis\\megatuile"
 
 #     for megatuile in os.listdir(path_fichier) :
-#         dico[megatuile[4:8]] = f"tuiles\\{megatuile}"
+#         dico[megatuile[4:8]] = f"megatuile\\{megatuile}" # extrait le code de la tuile et lui donne en clé la chaîne de caractères 
 
+#     return dico
 
-    return dico
+def renvoie_chemin(code_tuile : str, dico: Dict[str, str]) -> str :
+    """
+    renvoie le chemin d'accès à l'image
+
+    Args :
+        code_tuile (str) : nom de la tuile
+
+        dico (dict) : dictionnaire contenant les chemins d'accès des tuiles
+    Retours : 
+        str : chemin dans l'arborescence de la tuile 
+    """
+
+    return f"{os.getcwd()}\\fichiers fournis\\{dico[code_tuile]}"
 
 ###################################################################################################
 
@@ -93,39 +100,40 @@ def emplacement_valide(grille : List[List[Optional[str]]] , i:int, j:int, nom_tu
                 return False
     return True
 
-# def emplacement_valide_mega(grille: List[List[Optional[str]]], *args) -> bool:
-#     """
-#     Vérifie si une tuile (classique ou mega) est valide à un emplacement donné.
+def place_megatuiles(grille: List[List[Optional[str]]], i_ancrage: int, j_ancrage: int, hauteur: int, largeur: int, code_megatuile: str) -> List[Tuple[int, int]] :
+    """
+    Place la megatuile dans la fenêtre et 
+    ajoute le code de la megatuile à chaque 
+    case utilisée dans la matrice. 
 
-#     - Tuile classique : emplacement_valide(grille, i, j, nom_tuile)
-#     - MegaTuile  : emplacement_valide(grille, i, j, nom_tuile, hauteur, largeur)
+    Args :
+        grille (list) : matrice représentative
 
-#     """
-#     if len(args) == 3:
-#         i, j, nom_tuile = args 
-#         hauteur, longeur = (1, 1) # les tuiles standard prennent 1x1 = 1 taille de case
+        code_megatuile (str) : nom de la tuile
 
-#     elif len(args) == 5:
-#         i, j, nom_tuile, hauteur, largeur = args # on fait le même procédé pour les megatuiles, qui prendront plus de cases
+        hauteur, largeur (int) : taille de la megatuile
 
-#     # Pour chaque case bordure de la zone (taille x taille)
-#     # for di in range(hauteur):
-#     #     for dj in range(longueur):
-#     #         x, y= i + di, j + dj # on crée des nouvelles coordonnées par rapport au décalage en taille et en hauteur
-#     #         voisins = [(x-1, y), (x, y+1), (x+1, y), (x, y-1)]
+        i_ancrage, j_ancrage (int) : coordonnées de la case "de départ"
+                                    cliquée pour placer la tuile
+    Retours :
+        list : liste des couples de coordonnées prises par la megatuile
+    """
+    dico = cree_dico()
 
-#     #         for index, (vx, vy) in enumerate(voisins):
-#     #             if 0 <= vx < len(grille) and 0 <= vy < len(grille[0]):
-#     #                 voisin = grille[vx][vy]
-#     #                 if voisin is not None:
-#     #                     indice_voisin = (index + 2) % 4
-#     #                     if voisin[indice_voisin] != nom_tuile[index]:
-#     #                         return False
-#     # return True
+    if verifie_megatuiles(grille, code_megatuile, hauteur, largeur, i_ancrage, j_ancrage) : # la megatuile est compatible dans son emplacement
 
-#     for nb_largeur in range(hauteur) :
-#         for nb_longueur in range(largeur) :
+        liste_cases_prises = []
 
+        fltk.image(j_ancrage*75, i_ancrage*75, renvoie_chemin(code_megatuile, dico), largeur=75*largeur, hauteur=75*hauteur, tag=...)  # image globale
+
+        # on ajoute l'image une fois dans la fenêtre puis on ajoute le code dans la matrice -> évite les répétitions
+        for i in range(i_ancrage, i_ancrage+hauteur):
+            for j in range(j_ancrage, j_ancrage+largeur):
+                grille[i][j] = code_megatuile
+
+                liste_cases_prises.append((i, j))
+
+    return liste_cases_prises
 
 
 def tuiles_possibles(grille: List[List[Optional[str]]], i: int, j:int) -> List[str] :
@@ -149,6 +157,36 @@ def tuiles_possibles(grille: List[List[Optional[str]]], i: int, j:int) -> List[s
             liste_tuiles.append(tuile)
     
     return liste_tuiles
+
+def verifie_megatuiles(grille: List[List[Optional[str]]], code_megatuile: str, hauteur: int, largeur: int, i_ancrage: int, j_ancrage: int) -> bool :
+    """
+    Permet de vérifier si en cliquant sur la case d'ancrage
+    de la megatuile, elle est dans la grille, elle se racolle 
+    et elle n'empiète pas sur une tuile pré-existante. 
+
+    Args : 
+        grille (list) : matrice représentative
+
+        code_megatuile (str) : nom de la tuile
+
+        hauteur, largeur (int) : taille de la megatuile
+
+        i_ancrage, j_ancrage (int) : coordonnées de la case "de départ"
+                                    cliquée pour placer la tuile
+
+    Retours : 
+        None
+    """
+    
+    for i in range(i_ancrage, (i_ancrage+hauteur)) : # on vérifie la place que prend la megatuile avec les boucles
+        for j in range(j_ancrage, (j_ancrage+largeur)):
+
+            if 0 <= i < len(grille) and 0 <= j < len(grille[0]) :  # vérifie si megatuile peut être placée dans la fenêtre
+                if grille[i][j] is None and not(emplacement_valide(grille, i, j, code_megatuile)) : # on vérifie si la case se racolle bien
+                    return False
+            else : # la megatuile sort de la fenêtre
+                return False
+    return True 
 
 
 #######################################################################################################  
@@ -218,17 +256,19 @@ def gere_clic_v1(grille: List[List[Optional[str]]], dico_etat_visuel: Dict[str, 
                 compatibles = tuiles_possibles(grille, i, j)
     
                 if compatibles:
-                    tuile = random.choice(compatibles)  # On prend une case aléatoire parmi les voisins compatibles
+                    tuile = affiche_sous_menu_tuiles(compatibles, dico)
                     
                     grille[i][j] = tuile # ajoute notre tuile à la matrice de représentation
                     
-                    chemin = f"{os.getcwd()}\\fichiers fournis\\{dico[tuile]}" # récudpération du chemin dans l'arborescence
+                    chemin = renvoie_chemin(tuile, dico) # récudpération du chemin dans l'arborescence
                     
                     fltk.image(j * 75, i * 75, chemin, ancrage = "nw", largeur=75, hauteur=75, tag=tag_case)
+                    # place_megatuiles(grille, i, j, 2, 2, "MMMM")
+
                     
                 else: # message d'erreur si aucune tuile n'est posable
-                    rectangle_pb = fltk.rectangle(15, 15, 375, 80, remplissage="white", tag = "aucune_tuile")
-                    texte_pb = fltk.texte(195, 45, "Aucune tuile compatible", ancrage="center", couleur="red", tag="aucune_tuile")
+                    fltk.rectangle(15, 15, 375, 80, remplissage="white", tag = "aucune_tuile")
+                    fltk.texte(195, 45, "Aucune tuile compatible", ancrage="center", couleur="red", tag="aucune_tuile")
 
             
         else : # la case n'est pas vide donc il faut supprimer l'image à cet emplacement
@@ -274,28 +314,34 @@ def gere_clavier(grille: List[List[Optional[str]]], ev: tuple, dico_etat_visuel:
     if touche == "v" :
         dico_etat_visuel["visuel_actif"] = not(dico_etat_visuel["visuel_actif"])  # on affiche quand l'utilisateur appuie sur v
         print(dico_etat_visuel["visuel_actif"])
+        affiche_etat_visuel(dico_etat_visuel)
 
     elif touche == "space": # gère le placement manuel des tuiles sur le tableau
 
         fltk.efface("rectangle_contraint") # efface le rectangle rouge lié à l'assistant de conception, s'il existe
 
         solveur_n3_visuel(grille, dico, visuel= dico_etat_visuel["visuel_actif"]) # complète (si possible) la matrice
-
+        # solveur_n1_visuel(grille, dico)
 
     elif touche in ["Up", "Left", "Down", "Right"] :
         fltk.efface('rectangle_contraint') # efface le rectangle rémanent de l'assistant de conception
+
         decale_grille(grille, touche)
         clear_fenetre()
+        affiche_nv_fenetre(grille, dico)
         fltk.mise_a_jour()
-        affiche_nv_fenetre(grille, touche, dico)
         solveur_n1_visuel(grille, dico)
 
 
     elif touche == "c" :
-        for i in range(10) :
-            for j in range(10) :
-                fltk.efface(f"case_{i}_{j}")
-                grille[i][j] == None
+        for i in range(len(grille)) :
+            for j in range(len(grille[0])) :
+
+                fltk.efface(f"case_{i}_{j}") # efface l'image
+                grille[i][j] = None # efface la place dans la matrice
+
+        fltk.efface("rectangle_contraint") # efface la case de l'assistant de conception
+
         fltk.mise_a_jour()
         
 
@@ -337,9 +383,8 @@ def decale_grille(grille: List[List[Optional[str]]], touche: str) -> None: # pas
 
 
 
-def affiche_nv_fenetre(grille: List[List[Optional[str]]], direction_scroll: str, dico_tuiles: Dict[str, str]) -> None :
+def affiche_nv_fenetre(grille: List[List[Optional[str]]], dico_tuiles: Dict[str, str]) -> None :
     """
-
     après avoir décalé la grille dans la direction appropriée,
     et rendu la fenêtre vierge, 
     on peut replace chaque image dans la bonne nouvelle case.
@@ -347,15 +392,11 @@ def affiche_nv_fenetre(grille: List[List[Optional[str]]], direction_scroll: str,
     fonction.
 
     Args :
-        direction_scroll (str) : reprend la valeur de la touche 
-            pressée. Indique dans quelle direction décaler les images.
-
         dico_tuiles (dict) : dictionnaire contenant tous les chemins
     Retours : 
         None
     """
 
-    path_dossier_tuiles = os.getcwd() + "\\fichiers fournis\\"
 
     for i in range(len(grille)):
         for j in range(len(grille[0])):
@@ -364,11 +405,181 @@ def affiche_nv_fenetre(grille: List[List[Optional[str]]], direction_scroll: str,
 
             if tuile:  # si la tuile est None, on ne l'affiche pas -> évite de faire des disjonctions de cas
 
-                fltk.image(j*75, i*75, path_dossier_tuiles + dico_tuiles[tuile],
-                           ancrage="nw", hauteur=75, largeur=75, tag=f"case_{i}_{j}")
+                chemin = renvoie_chemin(tuile, dico_tuiles)
+                fltk.image(j*75, i*75, chemin, ancrage="nw", hauteur=75, largeur=75, tag=f"case_{i}_{j}")
 
-                
 
+def supprime_megatuile(grille: List[List[Optional[str]]], i: int , j: int, liste_cases_prises: List[Tuple[int, int]]) -> None :
+    """
+    efface de la grille et de la fenêtre la megatuile si l'on 
+    clique dessus. 
+
+    Args : 
+        grille (list) : matrice représentative
+        i, j (int) : coordonnées de la case cliquée 
+        liste_cases_prises (list) : liste des coordonnées 
+                des cases prises par la megatuile
+
+    Retours : 
+        None
+    """
+    
+
+    liste_cases_prises.remove((i, j))
+
+    fltk.efface(f"case_{i}_{j}")
+
+    grille[i][j] = None 
+
+    for i_restant, j_restant in liste_cases_prises : 
+        grille[i_restant][j_restant] = None
+
+        fltk.efface(f"case_{i_restant}_{j_restant}")    
+
+def affiche_sous_menu_tuiles(compatibles: List[str], dico: Dict[str, str]) -> None:
+    """
+    Affiche un menu carré avec les tuiles compatibles et un message.
+    Si plus de 8 tuiles, permet de défiler avec les flèches gauche/droite.
+    Appuyer sur 'i' masque/affiche le menu.
+
+    Args : 
+        compatibles (list) : liste des tuiles compatibles 
+
+        dico : dico contenant les codes et les chemins des tuiles 
+
+    Retours :
+        None
+    """
+
+    TAILLE = 75
+    MARGE = 10
+    NB_COL = 4
+    NB_LIG = 2
+    NB_PAR_PAGE = NB_COL * NB_LIG
+    X_MENU = 200
+    Y_MENU = 250
+
+    HAUTEUR_MESSAGE = 40
+    LARGEUR_MENU = NB_COL * (TAILLE + MARGE) - MARGE + 60
+    Y_MENU_FOND = Y_MENU - 50
+    HAUTEUR_FOND = NB_LIG * (TAILLE + MARGE) - MARGE + 5 + HAUTEUR_MESSAGE + 20
+
+    PAGE = 0
+    nb_pages = (len(compatibles) + NB_PAR_PAGE - 1) // NB_PAR_PAGE
+
+    def affiche_page(PAGE):
+        fltk.efface("menu_carre")
+        fltk.efface("menu_carre_border")
+        fltk.efface("menu_message")
+        for idx in range(NB_PAR_PAGE):
+            fltk.efface(f"sousmenu_{idx}")
+        # Fond et bordure
+        fltk.rectangle(
+            X_MENU-30, Y_MENU_FOND,
+            X_MENU-30 + LARGEUR_MENU,
+            Y_MENU_FOND + HAUTEUR_FOND,
+            couleur="white", remplissage="white", epaisseur=3, tag="menu_carre"
+        )
+        fltk.rectangle(
+            X_MENU-30, Y_MENU_FOND,
+            X_MENU-30 + LARGEUR_MENU,
+            Y_MENU_FOND + HAUTEUR_FOND,
+            couleur="black", epaisseur=3, tag="menu_carre_border"
+        )
+        # Message
+        fltk.texte(
+            X_MENU-30 + LARGEUR_MENU//2, Y_MENU_FOND + 22,
+            "Choisissez la tuile que vous voulez placer !",
+            ancrage="center", taille=13, tag="menu_message"
+        )
+        # Affichage des tuiles de la page courante
+        positions.clear()
+        start = PAGE * NB_PAR_PAGE
+        end = min(start + NB_PAR_PAGE, len(compatibles))
+        tuiles_affichees = compatibles[start:end]
+        for idx, tuile in enumerate(tuiles_affichees):
+            col = idx % NB_COL
+            lig = idx // NB_COL
+            x = X_MENU + col * (TAILLE + MARGE)
+            y = Y_MENU + lig * (TAILLE + MARGE)
+            chemin = f"{os.getcwd()}\\fichiers fournis\\{dico[tuile]}"
+            fltk.image(x, y, chemin, ancrage="nw", largeur=TAILLE, hauteur=TAILLE, tag=f"sousmenu_{idx}")
+            positions.append((x, y, x + TAILLE, y + TAILLE, tuile))
+        # Flèches de navigation si besoin
+        if nb_pages > 1:
+            if PAGE > 0:
+                fltk.texte(X_MENU-40, Y_MENU+TAILLE, "<", ancrage="center", taille=30, tag="menu_carre")
+            if PAGE < nb_pages-1:
+                fltk.texte(X_MENU-30 + LARGEUR_MENU+10, Y_MENU+TAILLE, ">", ancrage="center", taille=30, tag="menu_carre")
+        fltk.mise_a_jour()
+
+    positions = []
+    menu_visible = True
+
+    affiche_page(PAGE)
+
+    while True:
+        ev = fltk.attend_ev()
+        tev = fltk.type_ev(ev)
+        if tev == "ClicGauche" and menu_visible:
+            x, y = fltk.abscisse(ev), fltk.ordonnee(ev)
+            # Navigation gauche
+            if nb_pages > 1 and PAGE > 0 and X_MENU-60 < x < X_MENU-10 and Y_MENU+TAILLE < y < Y_MENU+TAILLE+40:
+                PAGE -= 1
+                affiche_page(PAGE)
+                continue
+            # Navigation droite
+            if nb_pages > 1 and PAGE < nb_pages-1 and X_MENU-10 + LARGEUR_MENU < x < X_MENU+40 + LARGEUR_MENU and Y_MENU+TAILLE < y < Y_MENU+TAILLE+40:
+                PAGE += 1
+                affiche_page(PAGE)
+                continue
+            # Sélection tuile
+            for idx, (x1, y1, x2, y2, tuile) in enumerate(positions):
+                if x1 <= x <= x2 and y1 <= y <= y2:
+                    # Efface le menu
+                    for idx2 in range(NB_PAR_PAGE):
+                        fltk.efface(f"sousmenu_{idx2}")
+                    fltk.efface("menu_carre")
+                    fltk.efface("menu_carre_border")
+                    fltk.efface("menu_message")
+                    return tuile
+        elif tev == "Touche":
+            touche = fltk.touche(ev)
+            if touche == "Escape":
+                for idx in range(NB_PAR_PAGE):
+                    fltk.efface(f"sousmenu_{idx}")
+                fltk.efface("menu_carre")
+                fltk.efface("menu_carre_border")
+                fltk.efface("menu_message")
+                return None
+            elif touche == "i":
+                if menu_visible:
+                    for idx in range(NB_PAR_PAGE):
+                        fltk.efface(f"sousmenu_{idx}")
+                    fltk.efface("menu_carre")
+                    fltk.efface("menu_carre_border")
+                    fltk.efface("menu_message")
+                    menu_visible = False
+                else:
+                    affiche_page(PAGE)
+                    menu_visible = True
+            elif touche == "Right" and PAGE < nb_pages-1:
+                PAGE += 1
+                affiche_page(PAGE)
+            elif touche == "Left" and PAGE > 0:
+                PAGE -= 1
+                affiche_page(PAGE)
+
+
+def affiche_etat_visuel(etat_visuel: Dict[str, bool]) -> None:
+    """
+    Affiche un rond vert (ON) ou rouge (OFF) en haut à droite selon l'état du solveur visuel.
+    """
+    fltk.efface("etat_visuel")
+    x, y, r = 720, 30, 15  # position et rayon du rond
+    couleur = "green" if etat_visuel["visuel_actif"] else "red"
+    fltk.cercle(x, y, r, couleur=couleur, remplissage=couleur, epaisseur=2, tag="etat_visuel")
+    fltk.texte(x, y + 25, "Anim.", ancrage="center", taille=12, couleur="black", tag="etat_visuel") 
 #####################################################################################   
 
 ################################# SOLVEUR ###########################################
@@ -394,6 +605,8 @@ def choisit_case_vide_slv1(grille):
 
 def solveur_n1_visuel(grille, dico) -> None :
     """
+    # TODO : niveau 2 = prendre le dernier indice parcouru et lancer la recherche qu'à
+                        partir de là
     Algorithme de backtracking, basé sur un parcours itératif
     pour trouver la première case vide sur laquelle baser l'algorithme.
     On choisit la case en parcourant la liste dans le sens de lecture occidental
@@ -409,6 +622,7 @@ def solveur_n1_visuel(grille, dico) -> None :
         None
     """
     if grille_remplie(grille) :
+        fltk.mise_a_jour()
         return True
     else :
         i, j = choisit_case_vide_slv1(grille) # coordonnées de la première case vide
@@ -420,12 +634,11 @@ def solveur_n1_visuel(grille, dico) -> None :
         for index, tuile in enumerate(liste_tuiles) :
             grille[i][j] = tuile # on ajoute une tuile dans la case vide
             
-            chemin = f"{os.getcwd()}\\fichiers fournis\\{dico[tuile]}" # récupération du chemin dans l'arborescence
+            chemin = renvoie_chemin(tuile, dico) # récupération du chemin dans l'arborescence
                     
             fltk.image(j * 75, i * 75, chemin, ancrage = "nw", largeur=75, hauteur=75, tag = f"case_{i}_{j}")
             
-            fltk.mise_a_jour()
-            
+
             if solveur_n1_visuel(grille, dico): #on lance la recherche récursive pour compléter la grilles
                 return True
             else :
@@ -447,9 +660,8 @@ def grille_remplie(grille : List[List[Optional[str]]]) -> bool :
         
     """
     for ligne in grille :
-        for case in ligne :
-            if case is None :
-                return False
+        if not(all(ligne)) : # renvoie True si et seulement si chaque case est évaluée à True (donc non-vide)
+            return False
     return True
 
 
@@ -488,15 +700,16 @@ def plus_contrainte(grille: List[List[Optional[str]]]) -> Tuple[int, int] :
 
 
 def solveur_n3_visuel(grille : List[List[Optional[str]]], dico : Dict[str, str], visuel=False) -> None :
+
+    # NIVEAU 4 : PARAMETRE SUPPLEMENTAIRE POUR COMPTER LES CONTRAINTES ET NE REGARDER
+        # QUE LES CONTRAINTES QUI SONT MODIFIEES 
     """
     On parcourt l'entièreté de la liste afin de trouver 
     la case la plus contrainte et on base notre 
     algorithme de backtracking dessus, à chaque itération
     du solveur. Ce système est basé sur la recherche 
     de la Minimum Remaining Value (RMV), solution utilisée en Constraint
-    Satisfaction Problems. La différence avec la fonction "solveur_n3" est 
-    que celle-ci affiche toutes les étapes une par une de la création de la 
-    carte.
+    Satisfaction Problems.
     
     Args :
         grille (list) : matrice des tuiles
@@ -526,7 +739,7 @@ def solveur_n3_visuel(grille : List[List[Optional[str]]], dico : Dict[str, str],
         for tuile in lst_tuiles :
             grille[i][j] = tuile
 
-            chemin = f"{os.getcwd()}\\fichiers fournis\\{dico[tuile]}" # récupération du chemin dans l'arborescence
+            chemin = renvoie_chemin(tuile, dico) # récupération du chemin dans l'arborescence
                     
             fltk.image(j * 75, i * 75, chemin, ancrage = "nw", largeur=75, hauteur=75, tag = f"case_{i}_{j}")
             
@@ -612,7 +825,7 @@ def show_case_contrainte(grille: List[List[Optional[str]]]) -> Tuple[str, str] :
 
     i, j = plus_contrainte(grille)
 
-    fltk.rectangle(j*75, i*75, (j+1)*75, (i+1)*75, couleur="red", tag="rectangle_contraint")
+    fltk.rectangle(j*75, i*75, (j+1)*75, (i+1)*75, couleur="red", epaisseur=2, tag="rectangle_contraint")
 
     return i, j
 
@@ -639,13 +852,44 @@ def assistant_conception(grille: List[List[Optional[str]]]) -> None :
     if nb_tuiles == 0 :
 
         # AMELIORER L'APPARENCE DU MESSAGE D'ERREUR 
-        
+
         fltk.rectangle(100, 100, 500, 300, couleur= "red", tag="aucune_tuile")
 
 
+def solve_rivieres(grille: List[List[Optional[str]]]) -> None:
+    """
+    Algorithme similaire à la coloration de zone afin de
+    créer des rivières réalistes. 
+    Chaque rivière doit :
+        - ne pas faire de boucles;
+        - démarrer d'une montagne (ou hors de la carte);
+        - Toute rivière doit terminer dans la mer (ou hors de la carte).
+        - Une rivière peut rejoindre une autre rivière, mais 
+            ne peut pas se séparer en deux.
 
+    Args : 
+        grille (list) : matrice représentative du tableau
 
+    Retours :
+        None
+    """
+    #     def chemins_profondeur(plateau, directions, deque):
+    # fltk.attente(5)
+    # while len(deque) != 0:
+    #     i,j,old_i,old_j = deque.pop()
 
+    #     if plateau[i][j] != "white":
+    #         continue
+
+    #     plateau[i][j] = "yellow"
+    #     directions[i][j] = old_i,old_j
+    #     affiche_plateau(plateau, maj = False)
+    #     affiche_arbre(directions)
+        
+    #     for new_i,new_j in [(i+1,j),(i-1,j),(i,j+1),(i,j-1)]:
+    #         deque.append((new_i,new_j,i,j))
+
+    
 
 
 
@@ -666,18 +910,16 @@ def mapmaker() -> None :
     """
     grille = [[None for x in range(10)] for x in range(10)] # création d'une grille représentant les 10 par 10 cases de base 
     
-#     grille_test = [["PFMP", "HFHS" , None ],[None    , None , None ],[None    , None , None ]]
-
+# [['RBDP', 'PBSB', 'PRGB', 'DSDR', 'SHGS', 'GRRH', 'RRPR', 'MPPR', 'DHRP', 'GBDH'], ['DHPR', 'SSDH', 'GPGS', 'DSDP', 'GMGS', 'RPMM', 'PRMP', 'PBDR', 'RPGB', 'DHPP'], ['PRRR', 'DHRR', 'GRRH', 'DHPR', 'GRPH', 'MMMR', 'MRMM', 'DSDR', 'GRGS', 'PBDR'], ['RRGB', 'RPPR', 'RRRP', 'PMPR', 'PPMM', 'MMPP', 'MRMM', 'DHPR', 'GPRH', 'DHRP'], ['GMGS', 'PPMM', 'RBDP', 'PPGB', 'MFPP', 'PMPF', 'MMMM', 'PMMM', 'RPMM', 'RRPP'], ['GPPH', 'MPFP', 'DSDP', 'GPGS', 'PRRP', 'PBDR', 'MBSB', 'MBSB', 'MBSB', 'PRGB'], ['PMPP', 'FPMM', 'DSDP', 'GPGS', 'RRPP', 'DSDR', 'SHGS', 'SHFH', 'SSDH', 'GRGS'], ['PBDR', 'MBSB', 'DSSB', 'GBSS', 'PBSB', 'DSSB', 'GFGS', 'FPFF', 'DHRP', 'GRRH'], ['DSDR', 'SHGS', 'SHRH', 'SHPH', 'SHPH', 'SHPH', 'GPPH', 'FPPP', 'RPMP', 'RMPP'], ['DSSB', 'GMGS', 'RPPM', 'PFFP', 'PMMF', 'PRMM', 'PPMR', 'PMMP', 'MPMM', 'PFPP']]
     cree_UI()
 
     etat_visuel = {"visuel_actif" : False} # désactive par défaut l'affichage dynamique 
+    affiche_etat_visuel(etat_visuel)
     while True :
         gere_clic_v1(grille, etat_visuel)
 
 
 if __name__ == "__main__" :
     mapmaker()
-
-
 
     
